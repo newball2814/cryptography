@@ -66,11 +66,11 @@ unsigned *md5(const char *msg, int mlen)
         unsigned w[16];
         char
         b[64];
-    }mm;
+    } mm;
     int os = 0;
     int grp, grps, q, p;
     unsigned char *msg2;
-    if (k==NULL) k= calctable(kspace);
+    if (k==NULL) k = calctable(kspace);
 
     for (q=0; q<4; q++) h[q] = h0[q];
     {
@@ -90,6 +90,7 @@ unsigned *md5(const char *msg, int mlen)
             memcpy(msg2+q, &u.w, 4 );
         }
     }
+
     for (grp=0; grp<grps; grp++)
     {
         memcpy(mm.b, msg2+os, 64);

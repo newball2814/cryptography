@@ -1,12 +1,12 @@
 #include<stdio.h>
-// #include<conio.h>
 #include<string.h>
 #include<malloc.h>
 #include<stdlib.h>
 #include<math.h>
+// #include<conio.h>
 
 void hex_to_bin(char *,char *);
-char* bin_to_hex(char *);
+char *bin_to_hex(char *);
 void permutation(char *,char *);
 void make_half(char *,char *,char *);
 void single_shift(char *,char *);
@@ -24,6 +24,7 @@ void xor_32(char *,char *,char *);
 void common_permutation(char *,char *);
 void hex_to_plain(char *,char *,int);
 int switch_case(char);
+
 char SB[32];
 char *bin[]={
     "0000",
@@ -72,7 +73,8 @@ int IP[8][8]={
     57,49,41,33,25,17,9,1,
     59,51,43,35,27,19,11,3,
     61,53,45,37,29,21,13,5,
-    63,55,47,39,31,23,15,7};
+    63,55,47,39,31,23,15,7
+};
 int E_bit[8][6]={
     32,1,2,3,4,5,
     4,5,6,7,8,9,
@@ -81,7 +83,8 @@ int E_bit[8][6]={
     16,17,18,19,20,21,
     20,21,22,23,24,25,
     24,25,26,27,28,29,
-    28,29,30,31,32,1};
+    28,29,30,31,32,1
+};
 char *look_up[]={
     "00",
     "01",
@@ -96,7 +99,8 @@ int sb_permutation[8][4]={
     2,8,24,14,
     32,27,3,9,
     19,13,30,6,
-    22,11,4,25};
+    22,11,4,25
+};
 int s1[4][16]={
     14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7,
     0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8,
@@ -201,12 +205,15 @@ void main()
     K12[48],L12[32],R12[32],ER12[48],F12[48],
     K13[48],L13[32],R13[32],ER13[48],F13[48],
     K14[48],L14[32],R14[32],ER14[48],F14[48],
-
     K15[48],L15[32],R15[32],ER15[48],F15[48],
     K16[48],L16[32],R16[32],ER16[48],F16[48];
-    printf(">Enter plain text : ");
+    
+    /* Get plaintext input */
+    printf("> Enter plain text: ");
     gets(input);
+
     len=strlen(input);
+
     for(i=0;i<len;i++)
     {
         while(input[i]!=0)
@@ -214,11 +221,11 @@ void main()
             r=input[i]%16;
             input[i]=input[i]/16;
             if(r>9)
-                {
-                    x=r-10;
-                    r=65+x;
-                    initial_hex[k]=r;
-                }
+            {
+                x=r-10;
+                r=65+x;
+                initial_hex[k]=r;
+            } 
             else
                 initial_hex[k]=r+48;
             k++;
@@ -236,10 +243,10 @@ void main()
     for(i=0;i<=d;i++)
     {
         if(i<d)
-            {
-                for(j=0;j<=15;j++)
-                    hex_arr[i][j]=initial_hex[f++];
-            }
+        {
+            for(j=0;j<=15;j++)
+                hex_arr[i][j]=initial_hex[f++];
+        }
         else if(k%16==0)
             break;
         else
@@ -256,12 +263,14 @@ void main()
             }
         }
     }
-    if(k%16!=0)
+    if (k%16!=0) 
         d++;
+
+    /* Generate random key*/
     hex_to_bin(key_hex,key_bin);
-    printf("\n>Key in Hexadecimal used for encryption : ");
-    for(i=0;i<16;i++)
-        printf("%c",key_hex[i]);
+    printf("\n> Key in Hexadecimal used for encryption: ");
+    for(i=0;i<16;i++)               
+        printf("%c",key_hex[i]);     /* Print key */
     for(m=0;m<d;m++)
     {
         for(i=0;i<16;i++)
@@ -336,7 +345,6 @@ void main()
         permutation_64(input_bin,L0,R0);
         des_round(L1,R1,L0,R0,ER0,K1,F1);
         des_round(L2,R2,L1,R1,ER1,K2,F2);
-
         des_round(L3,R3,L2,R2,ER2,K3,F3);
         des_round(L4,R4,L3,R3,ER3,K4,F4);
         des_round(L5,R5,L4,R4,ER4,K5,F5);
@@ -382,21 +390,28 @@ void main()
         {
             decrypted[i]=L0[i];
             decrypted[i+32]=R0[i];
-        } common_permutation(decrypted,decry_permut);
+        } 
+        common_permutation(decrypted,decry_permut);
         decryption=bin_to_hex(decry_permut);
         for(i=0;i<16;i++)
         {
             decryption_final_hex[++q]=*(decryption+i);
         }
     }
+
+    /* Print encrypted message */
     encryption_final[p+1]='\0';
-    printf("\n\n>Encrypted Output : ");
+    printf("\n\n> Encrypted Output: ");
     printf("%s",encryption_final);
+    
+    /* Print decrypted message in hexadecimal*/
     decryption_final_hex[q+1]='\0';
-    printf("\n\n>Decrypted Output in Hexadecimal:");
+    printf("\n\n> Decrypted Output in Hexadecimal: ");
     printf("%s",decryption_final_hex);
+    
+    /* Print decrypted message in plain ASCII */
     hex_to_plain(decryption_final_hex,decryption_final_plain,q+1);
-    printf("\n>Decrypted Output in Plain Text: ");
+    printf("\n> Decrypted Output in Plain Text: ");
     printf("%s\n",decryption_final_plain);
     getchar();
 }
@@ -651,7 +666,6 @@ void des_round(char *L1,char *R1,char *L0,char
     SB[0]='\0';
     xor_32(L0,f,R1);
 }
-
 void des_round_decry(char *L1,char *R1,char
                      *L0,char *R0,char *ER0,char *K1,char *F1)
 {

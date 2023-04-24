@@ -1,7 +1,9 @@
 #include<stdio.h>
-#define Nb 4
 
-int Nr =0,Nk =0;
+#define Nb 4
+#define xtime(x) ((x<<1)^(((x>>7) & 1)*0x1b))
+
+int Nr = 0,Nk = 0;
 unsigned char in[16], out[16], state[4][4];
 unsigned char RoundKey[240];
 unsigned char Key[32];
@@ -67,7 +69,6 @@ int Rcon[255] = {
     0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35,
     0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91,
     0x39,
-
     0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f,
     0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d,
     0x3a,
@@ -190,23 +191,21 @@ void ShiftRows()
     unsigned char temp;
     temp=state[1][0];
     state[1][0]=state[1][1];
-state[1][1]=state[1][2];
-state[1][2]=state[1][3];
-state[1][3]=temp;
-temp=state[2][0];
-state[2][0]=state[2][2];
-state[2][2]=temp;
-temp=state[2][1];
-state[2][1]=state[2][3];
-state[2][3]=temp;
-temp=state[3][0];
-state[3][0]=state[3][3];
-state[3][3]=state[3][2];
-state[3][2]=state[3][1];
-state[3][1]=temp;
+    state[1][1]=state[1][2];
+    state[1][2]=state[1][3];
+    state[1][3]=temp;
+    temp=state[2][0];
+    state[2][0]=state[2][2];
+    state[2][2]=temp;
+    temp=state[2][1];
+    state[2][1]=state[2][3];
+    state[2][3]=temp;
+    temp=state[3][0];
+    state[3][0]=state[3][3];
+    state[3][3]=state[3][2];
+    state[3][2]=state[3][1];
+    state[3][1]=temp;
 }
-
-#define xtime(x) ((x<<1)^(((x>>7) & 1)*0x1b))
 void MixColumns()
 {
     int i;
@@ -234,12 +233,12 @@ void Cipher()
         for(j=0;j<4;j++)
         {
             state[j][i] = in[i*4 + j];
-}
-}
-AddRoundKey(0);
-for(round=1;round<Nr;round++)
-{
-    SubBytes();
+        }
+    }
+    AddRoundKey(0);
+    for(round=1;round<Nr;round++)
+    {
+        SubBytes();
         ShiftRows();
         MixColumns();
         AddRoundKey(round);
@@ -285,4 +284,3 @@ int main()
     }
     return 1;
 }
-
