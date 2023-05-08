@@ -1,4 +1,4 @@
-#include<stdio.h>
+#include <stdio.h>
 
 #define Nb 4
 #define xtime(x) ((x<<1)^(((x>>7) & 1)*0x1b))
@@ -59,7 +59,8 @@ int getSBoxValue(int num)
             0xdf, //E
             0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42,
             0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb,
-            0x16 }; //F
+            0x16 
+        }; //F
     return sbox[num];
 }
 int Rcon[255] = {
@@ -213,16 +214,23 @@ void MixColumns()
     for(i=0;i<4;i++)
     {
         t=state[0][i];
-        Tmp = state[0][i] ^ state[1][i] ^
-            state[2][i] ^ state[3][i] ;
-        Tm = state[0][i] ^ state[1][i] ; Tm =
-            xtime(Tm); state[0][i] ^= Tm ^ Tmp ;
-        Tm = state[1][i] ^ state[2][i] ; Tm =
-            xtime(Tm); state[1][i] ^= Tm ^ Tmp ;
-        Tm = state[2][i] ^ state[3][i] ; Tm =
-            xtime(Tm); state[2][i] ^= Tm ^ Tmp ;
-        Tm = state[3][i] ^ t ; Tm = xtime(Tm);
-        state[3][i] ^= Tm ^ Tmp ;
+        Tmp = state[0][i] ^ state[1][i] ^ state[2][i] ^ state[3][i] ;
+
+        Tm = state[0][i] ^ state[1][i] ; 
+        Tm = xtime(Tm); 
+        state[0][i] ^= Tm ^ Tmp ;
+
+        Tm = state[1][i] ^ state[2][i]; 
+        Tm = xtime(Tm); 
+        state[1][i] ^= Tm ^ Tmp;
+
+        Tm = state[2][i] ^ state[3][i]; 
+        Tm = xtime(Tm); 
+        state[2][i] ^= Tm ^ Tmp;
+
+        Tm = state[3][i] ^ t; 
+        Tm = xtime(Tm);
+        state[3][i] ^= Tm ^ Tmp;
     }
 }
 void Cipher()
@@ -254,6 +262,7 @@ void Cipher()
         }
     }
 }
+
 int main()
 {
     int i;
@@ -282,5 +291,6 @@ int main()
     {
         printf("%02x ",out[i]);
     }
+    printf("\n");
     return 1;
 }

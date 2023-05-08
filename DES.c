@@ -209,11 +209,12 @@ void main()
     K16[48],L16[32],R16[32],ER16[48],F16[48];
     
     /* Get plaintext input */
-    printf("> Enter plain text: ");
-    gets(input);
+    printf("> Plain text: ");
+    gets(input);                    /* bruh */
 
     len=strlen(input);
 
+    /* Converts input to hex */
     for(i=0;i<len;i++)
     {
         while(input[i]!=0)
@@ -231,15 +232,19 @@ void main()
             k++;
         }
     }
+    
+    /* Swap positions of 2 bits in every pair */ 
     for(i=0;i<k;i=i+2)
     {
         temp=initial_hex[i];
         initial_hex[i]=initial_hex[i+1];
         initial_hex[i+1]=temp;
     }
-    d=k/16;
-    e=k%16;
+
+    d=k/16;    /* Number of hex pairs */
+    e=k%16;     
     f=0;
+
     for(i=0;i<=d;i++)
     {
         if(i<d)
@@ -266,18 +271,31 @@ void main()
     if (k%16!=0) 
         d++;
 
-    /* Generate random key*/
-    hex_to_bin(key_hex,key_bin);
+    /* Converts key from hex to bin */
+    hex_to_bin(key_hex, key_bin);
+
+    /* Print key */
     printf("\n> Key in Hexadecimal used for encryption: ");
     for(i=0;i<16;i++)               
-        printf("%c",key_hex[i]);     /* Print key */
+        printf("%c",key_hex[i]);     
+
+
+    /* Commence encryption */
     for(m=0;m<d;m++)
     {
         for(i=0;i<16;i++)
             input_hex[i]=hex_arr[m][i];
+
+        /* Converts input from hex to bin */
         hex_to_bin(input_hex,input_bin);
+
+        /* PC1 */
         permutation(key_bin,key_PC1);
+
+        /* Split key in half */
         make_half(key_PC1,C0,D0);
+
+        /* Then performs bit shift */
         single_shift(C0,C1);
         single_shift(D0,D1);
         single_shift(C1,C2);
@@ -310,6 +328,8 @@ void main()
         double_shift(D14,D15);
         single_shift(C15,C16);
         single_shift(D15,D16);
+
+        /* f function */
         make_key(C1,D1,CD1);
         permutation_48(CD1,K1);
         make_key(C2,D2,CD2);
@@ -367,9 +387,10 @@ void main()
         common_permutation(encrypted,encry_permut);
         encryption=bin_to_hex(encry_permut);
         for(i=0;i<16;i++)
-        {
             encryption_final[++p]=*(encryption+i);
-        }
+        
+
+        /* Decryption */
         des_round_decry(L16,R16,L15,R15,ER15,K16,F16);
         des_round_decry(L15,R15,L14,R14,ER14,K15,F15);
         des_round_decry(L14,R14,L13,R13,ER13,K14,F14);
@@ -413,8 +434,10 @@ void main()
     hex_to_plain(decryption_final_hex,decryption_final_plain,q+1);
     printf("\n> Decrypted Output in Plain Text: ");
     printf("%s\n",decryption_final_plain);
+
     getchar();
 }
+
 void hex_to_bin(char *input,char *in)
 {
     short i,j,k,lim=0;
@@ -485,7 +508,6 @@ void hex_to_plain(char *in,char *out,int t)
 int switch_case(char a)
 {
     switch(a)
-
     {
         case 'A':
             return(10);
