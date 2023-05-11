@@ -35,4 +35,4 @@ m = (c ** mod_inverse()) % n
 
 # Main
 print("Encrypted text: {}".format(c))    
-print("Decrypted text: {}".format(m))
+print("Decrypted text: {}".format(chr(m)))

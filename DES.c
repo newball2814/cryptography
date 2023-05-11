@@ -1,12 +1,12 @@
 #include<stdio.h>
+// #include<conio.h>
 #include<string.h>
 #include<malloc.h>
 #include<stdlib.h>
 #include<math.h>
-// #include<conio.h>
 
 void hex_to_bin(char *,char *);
-char *bin_to_hex(char *);
+char* bin_to_hex(char *);
 void permutation(char *,char *);
 void make_half(char *,char *,char *);
 void single_shift(char *,char *);
@@ -23,8 +23,7 @@ void xor(char *,char *,char *);
 void xor_32(char *,char *,char *);
 void common_permutation(char *,char *);
 void hex_to_plain(char *,char *,int);
-int switch_case(char);
-
+int switch_case(char );
 char SB[32];
 char *bin[]={
     "0000",
@@ -167,10 +166,9 @@ void main()
     int d,e,f;
     char hex_arr[25][16];
     char input_hex[16],input_bin[64];
-    char
-    key_hex[16]={'1','3','3','4','5','7','7','9','9','B','B','C','D','F','F','1'};
+    char key_hex[16]={'1','3','3','4','5','7','7','9','9','B','B','C','D','F','F','1'};
     char key_bin[64],key_PC1[56];
-    char ch,*decryption,*encryption,encryption_final[400] ,decryption_final_hex[400],decryption_final_plain[200];
+    char ch,*decryption,*encryption,encryption_final[400],decryption_final_hex[400],decryption_final_plain[200];
     char encrypted[64],decrypted[64],encry_permut[64],decry_permut[64];
     int length,p=-1,q=-1;
     char C0[28],D0[28],
@@ -207,14 +205,14 @@ void main()
     K14[48],L14[32],R14[32],ER14[48],F14[48],
     K15[48],L15[32],R15[32],ER15[48],F15[48],
     K16[48],L16[32],R16[32],ER16[48],F16[48];
-    
-    /* Get plaintext input */
-    printf("> Plain text: ");
+
+    /* Input */
+    printf(">Enter plain text : ");
     gets(input);                    /* bruh */
 
     len=strlen(input);
 
-    /* Converts input to hex */
+    /* Convert input to hex */
     for(i=0;i<len;i++)
     {
         while(input[i]!=0)
@@ -222,18 +220,17 @@ void main()
             r=input[i]%16;
             input[i]=input[i]/16;
             if(r>9)
-            {
-                x=r-10;
-                r=65+x;
-                initial_hex[k]=r;
-            } 
+                {
+                    x=r-10;
+                    r=65+x;
+                    initial_hex[k]=r;
+                }
             else
                 initial_hex[k]=r+48;
             k++;
         }
     }
-    
-    /* Swap positions of 2 bits in every pair */ 
+
     for(i=0;i<k;i=i+2)
     {
         temp=initial_hex[i];
@@ -241,17 +238,18 @@ void main()
         initial_hex[i+1]=temp;
     }
 
-    d=k/16;    /* Number of hex pairs */
-    e=k%16;     
+    d=k/16;
+    e=k%16;
     f=0;
 
+    /* Check if input is 64 bit */
     for(i=0;i<=d;i++)
     {
         if(i<d)
-        {
-            for(j=0;j<=15;j++)
-                hex_arr[i][j]=initial_hex[f++];
-        }
+            {
+                for(j=0;j<=15;j++)
+                    hex_arr[i][j]=initial_hex[f++];
+            }
         else if(k%16==0)
             break;
         else
@@ -268,34 +266,21 @@ void main()
             }
         }
     }
-    if (k%16!=0) 
+
+    if(k%16!=0)
         d++;
+    hex_to_bin(key_hex,key_bin);
+    printf("\n>Key in Hexadecimal used for encryption : ");
+    for(i=0;i<16;i++)
+    printf("%c",key_hex[i]);
 
-    /* Converts key from hex to bin */
-    hex_to_bin(key_hex, key_bin);
-
-    /* Print key */
-    printf("\n> Key in Hexadecimal used for encryption: ");
-    for(i=0;i<16;i++)               
-        printf("%c",key_hex[i]);     
-
-
-    /* Commence encryption */
-    for(m=0;m<d;m++)
+    for (m=0;m<d;m++)
     {
         for(i=0;i<16;i++)
-            input_hex[i]=hex_arr[m][i];
-
-        /* Converts input from hex to bin */
-        hex_to_bin(input_hex,input_bin);
-
-        /* PC1 */
+        input_hex[i]=hex_arr[m][i];
         permutation(key_bin,key_PC1);
-
-        /* Split key in half */
+        hex_to_bin(input_hex,input_bin);
         make_half(key_PC1,C0,D0);
-
-        /* Then performs bit shift */
         single_shift(C0,C1);
         single_shift(D0,D1);
         single_shift(C1,C2);
@@ -329,7 +314,6 @@ void main()
         single_shift(C15,C16);
         single_shift(D15,D16);
 
-        /* f function */
         make_key(C1,D1,CD1);
         permutation_48(CD1,K1);
         make_key(C2,D2,CD2);
@@ -363,6 +347,7 @@ void main()
         make_key(C16,D16,CD16);
         permutation_48(CD16,K16);
         permutation_64(input_bin,L0,R0);
+
         des_round(L1,R1,L0,R0,ER0,K1,F1);
         des_round(L2,R2,L1,R1,ER1,K2,F2);
         des_round(L3,R3,L2,R2,ER2,K3,F3);
@@ -379,18 +364,21 @@ void main()
         des_round(L14,R14,L13,R13,ER13,K14,F14);
         des_round(L15,R15,L14,R14,ER14,K15,F15);
         des_round(L16,R16,L15,R15,ER15,K16,F16);
+
         for(i=0;i<32;i++)
         {
             encrypted[i]=R16[i];
             encrypted[i+32]=L16[i];
         }
+
         common_permutation(encrypted,encry_permut);
         encryption=bin_to_hex(encry_permut);
-        for(i=0;i<16;i++)
-            encryption_final[++p]=*(encryption+i);
-        
 
-        /* Decryption */
+        for(i=0;i<16;i++)
+        {
+            encryption_final[++p]=*(encryption+i);
+        }
+
         des_round_decry(L16,R16,L15,R15,ER15,K16,F16);
         des_round_decry(L15,R15,L14,R14,ER14,K15,F15);
         des_round_decry(L14,R14,L13,R13,ER13,K14,F14);
@@ -407,12 +395,12 @@ void main()
         des_round_decry(L3,R3,L2,R2,ER2,K3,F3);
         des_round_decry(L2,R2,L1,R1,ER1,K2,F2);
         des_round_decry(L1,R1,L0,R0,ER0,K1,F1);
-        for(i=0;i<32;i++)
-        {
-            decrypted[i]=L0[i];
-            decrypted[i+32]=R0[i];
-        } 
-        common_permutation(decrypted,decry_permut);
+
+    for(i=0;i<32;i++)
+    {
+        decrypted[i]=L0[i];
+        decrypted[i+32]=R0[i];
+        } common_permutation(decrypted,decry_permut);
         decryption=bin_to_hex(decry_permut);
         for(i=0;i<16;i++)
         {
@@ -420,22 +408,24 @@ void main()
         }
     }
 
-    /* Print encrypted message */
     encryption_final[p+1]='\0';
-    printf("\n\n> Encrypted Output: ");
+    printf("\n\n>Encrypted Output : ");
     printf("%s",encryption_final);
-    
-    /* Print decrypted message in hexadecimal*/
+
     decryption_final_hex[q+1]='\0';
-    printf("\n\n> Decrypted Output in Hexadecimal: ");
+    printf("\n\n>Decrypted Output in Hexadecimal:");
     printf("%s",decryption_final_hex);
-    
-    /* Print decrypted message in plain ASCII */
+
     hex_to_plain(decryption_final_hex,decryption_final_plain,q+1);
-    printf("\n> Decrypted Output in Plain Text: ");
+    printf("\n>Decrypted Output in Plain Text: ");
     printf("%s\n",decryption_final_plain);
 
-    getchar();
+    /* Print output */
+    printf(">Decrypted Output in Bin: %s\n", decry_permut);
+    printf(">C1: %s\n", C1);
+    printf(">CD1: %s\n", CD1);
+    printf(">K1: %s\n", bin_to_hex(K1));
+    printf(">L16: %s\nR16: %s", L16, R16);
 }
 
 void hex_to_bin(char *input,char *in)
@@ -456,11 +446,13 @@ void hex_to_bin(char *input,char *in)
         }
     }
 }
+
 char* bin_to_hex(char *bit)
 {
     char tmp[5],*out;
     short lim=0,i,j;
     out=(char*)malloc(16*sizeof(char));
+
     for(i=0;i<64;i=i+4)
     {
         tmp[0]=bit[i];
@@ -477,9 +469,11 @@ char* bin_to_hex(char *bit)
             }
         }
     }
+
     out[lim]='\0';
     return out;
 }
+
 void hex_to_plain(char *in,char *out,int t)
 {
     int i,j=0,z,sum;
@@ -505,6 +499,7 @@ void hex_to_plain(char *in,char *out,int t)
     }
     *(out+j)='\0';
 }
+
 int switch_case(char a)
 {
     switch(a)
@@ -529,6 +524,7 @@ int switch_case(char a)
             break;
     }
 }
+
 void permutation(char *key_bin,char *key_PC1)
 {
     short i,j,k=0,temp;
@@ -542,6 +538,7 @@ void permutation(char *key_bin,char *key_PC1)
         }
     }
 }
+
 void make_half(char *key_PC1,char *a,char *b)
 {
     int i,j=0;
@@ -556,13 +553,15 @@ void make_half(char *key_PC1,char *a,char *b)
         }
     }
 }
+
 void single_shift(char *p,char *q)
 {
     int i;
     *(q+27)=*(p+0);
     for(i=0;i<27;i++)
-        *(q+i)=*(p+(i+1));
+    *(q+i)=*(p+(i+1));
 }
+
 void double_shift(char *p,char *q)
 {
     int i;
@@ -571,6 +570,7 @@ void double_shift(char *p,char *q)
     for(i=0;i<26;i++)
         *(q+i)=*(p+(i+2));
 }
+
 void make_key(char *a,char *b,char *c)
 {
     int i;
@@ -579,6 +579,7 @@ void make_key(char *a,char *b,char *c)
     for(i=28;i<56;i++)
         *(c+i)=*(b+(i-28));
 }
+
 void permutation_48(char *CD,char *K)
 {
     short i,j,m=0,temp;
@@ -592,6 +593,7 @@ void permutation_48(char *CD,char *K)
         }
     }
 }
+
 void permutation_64(char *in,char *L,char *R)
 {
     int i,j,m=0,temp;
@@ -615,6 +617,7 @@ void permutation_64(char *in,char *L,char *R)
         }
     }
 }
+
 void des_round(char *L1,char *R1,char *L0,char
                *R0,char *ER0,char *K1,char *F1)
 {
@@ -628,66 +631,66 @@ void des_round(char *L1,char *R1,char *L0,char
         t[0]=F1[i];
         t[1]=F1[i+5];
         t[2]='\0';
-        for(j=0;j<4;j++)
+    for(j=0;j<4;j++)
+    {
+        if(strcmp(t,look_up[j])==0)
+    {
+    row=j;
+    break;
+    }
+    }
+    tp[0]=F1[i+1];
+    tp[1]=F1[i+2];
+    tp[2]=F1[i+3];
+    tp[3]=F1[i+4];
+    tp[4]='\0';
+    for(j=0;j<16;j++)
+    {
+        if(strcmp(tp,bin[j])==0)
         {
-            if(strcmp(t,look_up[j])==0)
-            {
-                row=j;
-                break;
-            }
+            column=j;
+            break;
         }
-        tp[0]=F1[i+1];
-        tp[1]=F1[i+2];
-        tp[2]=F1[i+3];
-        tp[3]=F1[i+4];
-        tp[4]='\0';
-        for(j=0;j<16;j++)
-        {
-
-            if(strcmp(tp,bin[j])==0)
-            {
-                column=j;
-                break;
-            }
-        }
-        switch(i)
-        {
-            case 0:
-                temp=s1[row][column];
-                break;
-            case 6:
-                temp=s2[row][column];
-                break;
-            case 12:
-                temp=s3[row][column];
-                break;
-            case 18:
-                temp=s4[row][column];
-                break;
-            case 24:
-                temp=s5[row][column];
-                break;
-            case 30:
-                temp=s6[row][column];
-                break;
-            case 36:
-                temp=s7[row][column];
-                break;
-            case 42:
-                temp=s8[row][column];
-                break;
-        }
-        for(j=0;j<4;j++)
-        {
-            SB[limit]=bin[temp][j];
-            limit++;
-        }
+    }
+    switch(i)
+    {
+        case 0:
+        temp=s1[row][column];
+        break;
+        case 6:
+        temp=s2[row][column];
+        break;
+        case 12:
+        temp=s3[row][column];
+        break;
+        case 18:
+        temp=s4[row][column];
+        break;
+        case 24:
+        temp=s5[row][column];
+        break;
+        case 30:
+        temp=s6[row][column];
+        break;
+        case 36:
+        temp=s7[row][column];
+        break;
+        case 42:
+        temp=s8[row][column];
+        break;
+    }
+    for(j=0;j<4;j++)
+    {
+        SB[limit]=bin[temp][j];
+        limit++;
+    }
     }
     SB[limit]='\0';
     permutation_32(SB,f);
     SB[0]='\0';
     xor_32(L0,f,R1);
 }
+
 void des_round_decry(char *L1,char *R1,char
                      *L0,char *R0,char *ER0,char *K1,char *F1)
 {
@@ -699,73 +702,75 @@ void des_round_decry(char *L1,char *R1,char
     for(i=0;i<48;i=i+6)
     {
         tp[0]=F1[i];
-        tp[1]=F1[i+5];
-        tp[2]='\0';
-        for(j=0;j<4;j++)
+    tp[1]=F1[i+5];
+    tp[2]='\0';
+    for(j=0;j<4;j++)
+    {
+        if(strcmp(tp,look_up[j])==0)
         {
-            if(strcmp(tp,look_up[j])==0)
-            {
-                row=j;
-                break;
-            }
+            row=j;
+            break;
         }
-        tp[0]=F1[i+1];
-        tp[1]=F1[i+2];
-        tp[2]=F1[i+3];
-        tp[3]=F1[i+4];
-        tp[4]='\0';
-        for(j=0;j<16;j++)
+    }
+    tp[0]=F1[i+1];
+    tp[1]=F1[i+2];
+    tp[2]=F1[i+3];
+    tp[3]=F1[i+4];
+    tp[4]='\0';
+    for(j=0;j<16;j++)
+    {
+        if(strcmp(tp,bin[j])==0)
         {
-            if(strcmp(tp,bin[j])==0)
-            {
-                column=j;
-                break;
-            }
+            column=j;
+            break;
         }
-        switch(i)
-        {
-            case 0:
-                temp=s1[row][column];
-                break;
-            case 6:
-                temp=s2[row][column];
-                break;
-            case 12:
-                temp=s3[row][column];
-                break;
-            case 18:
-                temp=s4[row][column];
-                break;
-            case 24:
-                temp=s5[row][column];
-                break;
-            case 30:
-                temp=s6[row][column];
-                break;
-            case 36:
-                temp=s7[row][column];
-                break;
-            case 42:
-                temp=s8[row][column];
-                break;
-        }
-        for(j=0;j<4;j++)
-        {
-            SB[limit]=bin[temp][j];
-            limit++;
-        }
+    }
+    switch(i)
+    {
+        case 0:
+        temp=s1[row][column];
+        break;
+        case 6:
+        temp=s2[row][column];
+        break;
+        case 12:
+        temp=s3[row][column];
+        break;
+        case 18:
+        temp=s4[row][column];
+        break;
+        case 24:
+        temp=s5[row][column];
+        break;
+        case 30:
+        temp=s6[row][column];
+        break;
+        case 36:
+        temp=s7[row][column];
+        break;
+        case 42:
+        temp=s8[row][column];
+        break;
+    }
+    for(j=0;j<4;j++)
+    {
+        SB[limit]=bin[temp][j];
+        limit++;
+    }
     }
     SB[limit]='\0';
     permutation_32(SB,f);
     SB[0]='\0';
     xor_32(L0,f,R1);
 }
+
 void copy(char *L,char *R)
 {
     int i;
     for(i=0;i<32;i++)
         *(L+i)=*(R+i);
 }
+
 void permut_48(char *R,char *ER)
 {
     short i,j,m=0,temp;
@@ -779,8 +784,8 @@ void permut_48(char *R,char *ER)
         }
     }
 }
-void xor(char *K,char *ER,char *F)
 
+void xor(char *K,char *ER,char *F)
 {
     int i,m=0;
     for(i=0;i<48;i++)
@@ -790,14 +795,13 @@ void xor(char *K,char *ER,char *F)
             {
                 *(F+m)='0';
                 m++;
+            } else {
+                *(F+m)='1';
+                m++;
             }
-        else
-        {
-            *(F+m)='1';
-            m++;
-        }
     }
 }
+
 void xor_32(char *L0,char *f,char *R1)
 {
     short i,m=0;
@@ -816,6 +820,7 @@ void xor_32(char *L0,char *f,char *R1)
         }
     }
 }
+
 void permutation_32(char *SB1,char *f)
 {
     short i,j,m=0,temp;
@@ -829,6 +834,7 @@ void permutation_32(char *SB1,char *f)
         }
     }
 }
+
 void common_permutation(char *in,char *out)
 {
     short i,j,temp,m=0;
